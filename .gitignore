@@ -114,3 +114,8 @@ venv.bak/
 
 # Mac
 .DS_Store
+
+# Agentic
+CLAUDE.md
+.claude
+repomix-output.xml
