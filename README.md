@@ -1,13 +1,13 @@
-[![tests](https://github.com/PWZER/swagger-ui-py/actions/workflows/lint-and-pytest.yml/badge.svg)](https://github.com/PWZER/swagger-ui-py/actions/workflows/lint-and-pytest.yml)
-[![Version](https://badge.fury.io/gh/PWZER%2Fswagger-ui-py.svg)](https://github.com/PWZER/swagger-ui-py/tags)
-[![PyPi Version](https://img.shields.io/pypi/v/swagger-ui-py.svg)](https://pypi.org/project/swagger-ui-py/)
-[![PyPi Downloads](https://pepy.tech/badge/swagger-ui-py)](https://pepy.tech/project/swagger-ui-py)
+[![tests](https://github.com/SkyTik/swagger-ui-python/actions/workflows/lint-and-pytest.yml/badge.svg)](https://github.com/SkyTik/swagger-ui-python/actions/workflows/lint-and-pytest.yml)
+[![Version](https://badge.fury.io/gh/SkyTik%2Fswagger-ui-python.svg)](https://github.com/SkyTik/swagger-ui-python/tags)
 
-[Project Page](https://pwzer.github.io/swagger-ui-py/) | [Documentation](./docs/)
+[Documentation](./docs/)
 
-# swagger-ui-py
+# swagger-ui-python
 
 Seamless Swagger UI integration for Python web frameworks. A unified, framework-agnostic API for adding interactive OpenAPI documentation to your Python applications with automatic framework detection.
+
+> **Note:** This is a maintained fork of [PWZER/swagger-ui-py](https://github.com/PWZER/swagger-ui-py).
 
 **Status:** Production-ready, actively maintained
 **Python:** 3.9, 3.10, 3.11, 3.12
@@ -48,7 +48,7 @@ python3 -c "from swagger_ui import supported_list; print(supported_list)"
 ### Installation
 
 ```bash
-pip install swagger-ui-py
+pip install swagger-ui-python
 ```
 
 ### Basic Example (Flask)
@@ -264,8 +264,8 @@ Full documentation available in the `./docs` directory:
 
 ```bash
 # Clone repository
-git clone https://github.com/PWZER/swagger-ui-py.git
-cd swagger-ui-py
+git clone https://github.com/SkyTik/swagger-ui-python.git
+cd swagger-ui-python
 
 # Install dev dependencies
 pip install -e ".[dev]"
@@ -313,7 +313,7 @@ make upload              # Upload to PyPI
 
 For more help:
 - Check [examples/](./examples/) directory for working samples
-- Review [GitHub Issues](https://github.com/PWZER/swagger-ui-py/issues)
+- Review [GitHub Issues](https://github.com/SkyTik/swagger-ui-python/issues)
 - Read framework-specific documentation
 
 ## Contributing
@@ -335,6 +335,6 @@ Licensed under the Apache License 2.0. See LICENSE file for details.
 
 ## Support
 
-- **Issues:** [GitHub Issues](https://github.com/PWZER/swagger-ui-py/issues)
-- **Project:** [PWZER/swagger-ui-py](https://github.com/PWZER/swagger-ui-py)
-- **PyPI:** [swagger-ui-py](https://pypi.org/project/swagger-ui-py/)
+- **Issues:** [GitHub Issues](https://github.com/SkyTik/swagger-ui-python/issues)
+- **Project:** [SkyTik/swagger-ui-python](https://github.com/SkyTik/swagger-ui-python)
+- **PyPI:** [swagger-ui-python](https://pypi.org/project/swagger-ui-python/)

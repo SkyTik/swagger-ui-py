@@ -1,4 +1,4 @@
-## swagger-ui-py for chalice
+## swagger-ui-python for chalice
 
 ### Run Server
 
