@@ -74,5 +74,8 @@ jobs:
       - name: Run tests
         run: pytest -s test/
 
+      - name: Install uv
+        run: pip install uv
+
       - name: Verify package installation
         run: make install
