@@ -4,6 +4,9 @@ tools/*.tar.gz
 .vscode
 .envrc
 
+# setuptools-scm generated version file
+swagger_ui/_version.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
