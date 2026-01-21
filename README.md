@@ -3,14 +3,28 @@
 [![PyPi Version](https://img.shields.io/pypi/v/swagger-ui-py.svg)](https://pypi.org/project/swagger-ui-py/)
 [![PyPi Downloads](https://pepy.tech/badge/swagger-ui-py)](https://pepy.tech/project/swagger-ui-py)
 
-[Project Page](https://pwzer.github.io/swagger-ui-py/)
+[Project Page](https://pwzer.github.io/swagger-ui-py/) | [Documentation](./docs/)
 
 # swagger-ui-py
-Swagger UI for Python web framework, such Tornado, Flask, Quart, aiohttp, Sanic and Falcon.
 
-Only support Python3.
+Seamless Swagger UI integration for Python web frameworks. A unified, framework-agnostic API for adding interactive OpenAPI documentation to your Python applications with automatic framework detection.
 
-## Supported
+**Status:** Production-ready, actively maintained
+**Python:** 3.9, 3.10, 3.11, 3.12
+**Swagger UI:** v5.25.3
+**Swagger Editor:** v4.14.6
+
+## Key Features
+
+- **Framework Agnostic** - Single API works across 9+ Python frameworks
+- **Auto-Detection** - Automatically detects your framework, zero configuration needed
+- **Multiple Config Sources** - YAML/JSON files, remote URLs, Python dicts, or strings
+- **Swagger Editor** - Optional inline spec editor for live documentation editing
+- **Static Assets** - Automatic CSS, JS, images, and icons serving
+- **Customization** - Custom CSS, Swagger UI parameters, OAuth2 configuration
+- **Well-Tested** - 50+ test cases across all supported frameworks
+
+## Supported Frameworks
 
 - [Tornado](https://www.tornadoweb.org/en/stable/)
 - [Flask](https://flask.palletsprojects.com/)
@@ -22,151 +36,305 @@ Only support Python3.
 - [Bottle](https://bottlepy.org/docs/dev/)
 - [Chalice](https://aws.github.io/chalice/index.html)
 
-You can print supported list use command
+Check supported frameworks:
 
 ```bash
 python3 -c "from swagger_ui import supported_list; print(supported_list)"
+# Output: ['flask', 'tornado', 'sanic', 'aiohttp', 'quart', 'starlette', 'falcon', 'bottle', 'chalice']
 ```
 
-> If you want to add supported frameworks, you can refer to [Flask Support](/swagger_ui/handlers/flask.py) or [Falcon Support](/swagger_ui/handlers/falcon.py), Implement the corresponding `handler` and `match` function.
+## Quick Start
 
-## Usage
+### Installation
 
-- Install
+```bash
+pip install swagger-ui-py
+```
 
-  ```bash
-  pip3 install swagger-ui-py
-  ```
+### Basic Example (Flask)
 
-- Code
+```python
+from flask import Flask
+from swagger_ui import api_doc
 
-  Using the local config file
+app = Flask(__name__)
 
-  ```python
-  from swagger_ui import api_doc
-  api_doc(app, config_path='./config/test.yaml', url_prefix='/api/doc', title='API doc')
-  ```
+# Auto-detects Flask and registers routes
+api_doc(app, config_path='./openapi.yaml')
 
-  Or using config url, but need to suport [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
+if __name__ == '__main__':
+    app.run(debug=True)
+    # Visit: http://localhost:5000/api/doc
+```
 
-  ```python
-  api_doc(app, config_url='https://petstore.swagger.io/v2/swagger.json', url_prefix='/api/doc', title='API doc')
-  ```
+### Basic Example (Tornado)
 
-  Or using the config spec string
+```python
+import tornado.ioloop
+from tornado.web import Application
+from swagger_ui import api_doc
 
-  ```python
-  from swagger_ui import api_doc
-  spec_string = '{"openapi":"3.0.1","info":{"title":"python-swagger-ui test api","description":"python-swagger-ui test api","version":"1.0.0"},"servers":[{"url":"http://127.0.0.1:8989/api"}],"tags":[{"name":"default","description":"default tag"}],"paths":{"/hello/world":{"get":{"tags":["default"],"summary":"output hello world.","responses":{"200":{"description":"OK","content":{"application/text":{"schema":{"type":"object","example":"Hello World!!!"}}}}}}}},"components":{}}'
+app = Application()
 
-  api_doc(app, config_spec=spec_string, url_prefix='/api/doc', title='API doc')
-  ```
+# Auto-detects Tornado and registers routes
+api_doc(app, config_path='./openapi.yaml', url_prefix='/api/doc')
 
-  Or using the config dict
+if __name__ == '__main__':
+    app.listen(8888)
+    tornado.ioloop.IOLoop.current().start()
+    # Visit: http://localhost:8888/api/doc
+```
 
-  ```python
-  from swagger_ui import api_doc
-  config = {"openapi":"3.0.1","info":{"title":"python-swagger-ui test api","description":"python-swagger-ui test api","version":"1.0.0"},"servers":[{"url":"http://127.0.0.1:8989/api"}],"tags":[{"name":"default","description":"default tag"}],"paths":{"/hello/world":{"get":{"tags":["default"],"summary":"output hello world.","responses":{"200":{"description":"OK","content":{"application/text":{"schema":{"type":"object","example":"Hello World!!!"}}}}}}}},"components":{}}
+## Configuration Options
 
-  api_doc(app, config=config, url_prefix='/api/doc', title='API doc')
-  ```
+### 1. Configuration Sources (in priority order)
 
-  And suport config file with editor
+**Option A: YAML/JSON File**
 
-  ```python
-  api_doc(app, config_path='./config/test.yaml', editor=True)
-  ```
+```python
+api_doc(app, config_path='./openapi.yaml')
+```
 
-  And keep the old way
+**Option B: Remote URL** (requires CORS)
 
-  ```python
-  # for Tornado
-  from swagger_ui import tornado_api_doc
-  tornado_api_doc(app, config_path='./conf/test.yaml', url_prefix='/api/doc', title='API doc')
+```python
+api_doc(app, config_url='https://petstore.swagger.io/v2/swagger.json')
+```
 
-  # for Sanic
-  from swagger_ui import sanic_api_doc
-  sanic_api_doc(app, config_path='./conf/test.yaml', url_prefix='/api/doc', title='API doc')
+**Option C: Python Dict**
 
-  # for Flask
-  from swagger_ui import flask_api_doc
-  flask_api_doc(app, config_path='./conf/test.yaml', url_prefix='/api/doc', title='API doc')
+```python
+config = {
+    "openapi": "3.0.1",
+    "info": {"title": "My API", "version": "1.0.0"},
+    "paths": { ... }
+}
+api_doc(app, config=config)
+```
 
-  # for Quart
-  from swagger_ui import quart_api_doc
-  quart_api_doc(app, config_path='./conf/test.yaml', url_prefix='/api/doc', title='API doc')
+**Option D: JSON/YAML String**
 
-  # for aiohttp
-  from swagger_ui import aiohttp_api_doc
-  aiohttp_api_doc(app, config_path='./conf/test.yaml', url_prefix='/api/doc', title='API doc')
+```python
+spec_string = '{"openapi":"3.0.1","info":{"title":"My API"},...}'
+api_doc(app, config_spec=spec_string)
+```
 
-  # for Falcon
-  from swagger_ui import falcon_api_doc
-  falcon_api_doc(app, config_path='./conf/test.yaml', url_prefix='/api/doc', title='API doc')
-  ```
-  Passing a value to the keyword argument `host_inject` will disable the behaviour which injects a host value into the specification served by Swagger UI.
+**Option E: External Endpoint**
 
-- Edit `Swagger` config file (JSON or YAML)
+```python
+api_doc(app, config_rel_url='/swagger.json')  # App provides endpoint
+```
 
-  Please see [https://swagger.io/resources/open-api/](https://swagger.io/resources/open-api/).
+### 2. Common Parameters
 
-- Access
+```python
+api_doc(
+    app,
+    config_path='./openapi.yaml',      # Config source
+    url_prefix='/api/doc',              # Internal route path (default: '/api/doc')
+    base_url=None,                      # External URL for assets (defaults to url_prefix)
+    title='API Documentation',          # HTML page title
+    editor=False,                       # Enable spec editor
+    custom_css='https://cdn.../style.css',  # Custom CSS
+    host_inject=True,                   # Auto-inject request host
+)
+```
 
-  Open `http://<host>:<port>/api/doc/editor`, you can edit api doc config file.
+### 3. Reverse Proxy Support
 
-  Open `http://<host>:<port>/api/doc` view api doc.
+When running behind a reverse proxy with a path prefix (e.g., ingress `/service/*` → backend), use `base_url` to set the external URL path for static assets:
 
-## SwaggerUI Configuration
+```python
+# Proxy routes /service/docs/* to backend /docs/*
+api_doc(
+    app,
+    config_path='./openapi.yaml',
+    url_prefix='/docs',              # Internal routes registered at /docs
+    base_url='/service/docs',        # Assets linked as /service/docs/static/*
+)
+```
 
-  You can configure Swagger parameters using the dictionary, Both key and value are of type str, if value is JavaScript string, you need to wrap the quotes around it.
-  Such as `"layout": "\"StandaloneLayout\""`.
+- `url_prefix` - Used for internal route registration (app-side)
+- `base_url` - Used for asset URLs in HTML templates (browser-side, defaults to `url_prefix`)
 
-  ```python
-  parameters = {
-      "deepLinking": "true",
-      "displayRequestDuration": "true",
-      "layout": "\"StandaloneLayout\"",
-      "plugins": "[SwaggerUIBundle.plugins.DownloadUrl]",
-      "presets": "[SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset]",
-  }
-  api_doc(app, config_path='./config/test.yaml', parameters=parameters)
-  ```
+### 4. Swagger UI Customization
 
-  For details about parameters configuration, see the official documentation [Parameters Configuration](https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/).
+```python
+parameters = {
+    "deepLinking": "true",
+    "displayRequestDuration": "true",
+    "layout": "\"StandaloneLayout\"",
+    "plugins": "[SwaggerUIBundle.plugins.DownloadUrl]",
+}
+api_doc(app, config_path='./openapi.yaml', parameters=parameters)
+```
 
-## OAuth2 Configuration
+See [Swagger UI Parameters](https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/) for all options.
 
-  The format is similar to `parameters`.
+### 5. OAuth2 Configuration
 
-  ```python
-  oauth2_config = {
-      "clientId": "\"your-client-id\"",
-      "clientSecret": "\"your-client-secret-if-required\"",
-      "realm": "\"your-realms\"",
-      "appName": "\"your-app-name\"",
-      "scopeSeparator": "\" \"",
-      "scopes": "\"openid profile\"",
-      "additionalQueryStringParams": "{test: \"hello\"}",
-      "usePkceWithAuthorizationCodeGrant": True,
-  }
-  api_doc(app, config_path='./config/test.yaml', oauth2_config=oauth2_config)
-  ```
+```python
+oauth2_config = {
+    "clientId": "\"your-client-id\"",
+    "clientSecret": "\"your-secret\"",
+    "realm": "\"your-realm\"",
+    "appName": "\"your-app\"",
+    "scopeSeparator": "\" \"",
+    "scopes": "\"openid profile\"",
+}
+api_doc(app, config_path='./openapi.yaml', oauth2_config=oauth2_config)
+```
 
-  For details about OAuth2 configuration, see the official documentation [OAuth2 Configuration](https://swagger.io/docs/open-source-tools/swagger-ui/usage/oauth2/).
+See [OAuth2 Configuration](https://swagger.io/docs/open-source-tools/swagger-ui/usage/oauth2/) for details.
 
-## Swagger UI
-Swagger UI version is `v5.25.3`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
+### 6. Legacy Framework-Specific APIs
 
-## Swagger Editor
-Swagger Editor version is `v4.14.6`. see [https://github.com/swagger-api/swagger-editor](https://github.com/swagger-api/swagger-editor).
+Still supported for backward compatibility:
 
-## Update
-You can update swagger ui and swagger editor version with
+```python
+from swagger_ui import flask_api_doc, tornado_api_doc, sanic_api_doc
+
+# Same as api_doc(app, ...) but explicit
+flask_api_doc(app, config_path='./openapi.yaml')
+tornado_api_doc(app, config_path='./openapi.yaml')
+sanic_api_doc(app, config_path='./openapi.yaml')
+```
+
+## Routes Created
+
+The library automatically creates these routes (at `url_prefix=/api/doc`):
+
+- `GET /api/doc` - Interactive Swagger UI documentation
+- `GET /api/doc/swagger.json` - OpenAPI specification (JSON)
+- `GET /api/doc/editor` - Swagger Editor (if `editor=True`)
+- `GET /api/doc/static/{path}` - Static assets (CSS, JS, images)
+
+## Creating OpenAPI Specifications
+
+For details on writing OpenAPI specifications:
+
+- [OpenAPI 3.0 Guide](https://swagger.io/resources/open-api/)
+- [OpenAPI 3.1 Spec](https://spec.openapis.org/oas/v3.1.0)
+- [Swagger Editor](https://editor.swagger.io/) - Interactive spec editor
+
+## Versions
+
+- **Swagger UI:** v5.25.3 ([GitHub](https://github.com/swagger-api/swagger-ui))
+- **Swagger Editor:** v4.14.6 ([GitHub](https://github.com/swagger-api/swagger-editor))
+
+To update to newer versions:
 
 ```bash
 tox -e update
+# or
+python tools/update.py --ui-version=v5.25.3 --editor-version=v4.14.6
 ```
+
+## Extending the Library
+
+### Adding Support for New Frameworks
+
+To add support for a new framework:
+
+1. Create `swagger_ui/handlers/{framework}.py` following the [handler interface](./docs/system-architecture.md)
+2. Implement `handler(doc)` and `match(doc)` functions
+3. Add tests in `test/{framework}_test.py`
+4. Update README with framework name
+5. Auto-discovery will handle the rest
+
+See [Code Standards](./docs/code-standards.md) for detailed guidelines.
+
+### Custom Parameters & Configuration
+
+Pass custom parameters and OAuth2 configuration through the `api_doc()` function for full control over Swagger UI behavior.
+
+## Documentation
+
+Full documentation available in the `./docs` directory:
+
+- [Project Overview & PDR](./docs/project-overview-pdr.md) - Vision, goals, requirements
+- [Codebase Summary](./docs/codebase-summary.md) - Module structure and responsibilities
+- [Code Standards](./docs/code-standards.md) - Coding conventions and patterns
+- [System Architecture](./docs/system-architecture.md) - Design patterns and data flow
+- [Project Roadmap](./docs/project-roadmap.md) - Planned improvements and timeline
+
+## Development
+
+### Setup
+
+```bash
+# Clone repository
+git clone https://github.com/PWZER/swagger-ui-py.git
+cd swagger-ui-py
+
+# Install dev dependencies
+pip install -e ".[dev]"
+
+# Run tests
+make pytest
+
+# Format code
+make format
+
+# Build wheel
+make whl
+```
+
+### Testing
+
+```bash
+make pytest              # Run all tests
+make format-check        # Check code style
+make format              # Auto-format code
+```
+
+### Building & Release
+
+```bash
+make whl                 # Build wheel
+make upload              # Upload to PyPI
+```
+
+## Troubleshooting
+
+**Framework not detected:**
+- Ensure framework is installed
+- Try explicit `app_type` parameter: `api_doc(app, app_type='flask', ...)`
+
+**Config not loading:**
+- Check file path exists and is readable
+- Validate YAML/JSON format using [Swagger Editor](https://editor.swagger.io/)
+- Check CORS headers if using remote URL
+
+**Routes not registered:**
+- Ensure `api_doc()` called before app starts
+- Check `url_prefix` doesn't conflict with existing routes
+- Verify framework-specific setup (e.g., `app.register_blueprint()` for Flask)
+
+For more help:
+- Check [examples/](./examples/) directory for working samples
+- Review [GitHub Issues](https://github.com/PWZER/swagger-ui-py/issues)
+- Read framework-specific documentation
 
 ## Contributing
 
-If you are interested in becoming the developer or maintainer of this project, please contact me by email.
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Add tests for new functionality
+4. Ensure tests pass: `make pytest`
+5. Format code: `make format`
+6. Submit a pull request
+
+See [Code Standards](./docs/code-standards.md) for contribution guidelines.
+
+## License
+
+Licensed under the Apache License 2.0. See LICENSE file for details.
+
+## Support
+
+- **Issues:** [GitHub Issues](https://github.com/PWZER/swagger-ui-py/issues)
+- **Project:** [PWZER/swagger-ui-py](https://github.com/PWZER/swagger-ui-py)
+- **PyPI:** [swagger-ui-py](https://pypi.org/project/swagger-ui-py/)
