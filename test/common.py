@@ -31,6 +31,11 @@ kwargs_list = [
         'config_path': config_path,
         'config_rel_url': '/swagger.json',
     },
+    {
+        'url_prefix': '/docs',
+        'base_url': '/service/docs',
+        'config_path': config_path,
+    },
 ]
 
 parametrize_list = list(product(mode_list, kwargs_list))

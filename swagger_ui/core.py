@@ -33,6 +33,7 @@ class ApplicationDocument(object):
                  config_rel_url=None,
                  custom_css=None,
                  url_prefix=r'/api/doc',
+                 base_url=None,
                  title='API doc',
                  editor=False,
                  parameters={},
@@ -42,6 +43,7 @@ class ApplicationDocument(object):
         self.app_type = app_type
         self.title = title
         self.url_prefix = url_prefix.rstrip('/')
+        self.base_url = (base_url or url_prefix).rstrip('/')
         self.editor = editor
         self.extra_config = extra_config
 
@@ -60,7 +62,7 @@ class ApplicationDocument(object):
         self.parameters = copy.deepcopy(_DefaultSwaggerUIBundleParameters)
         if parameters:
             self.parameters.update(parameters)
-        self.parameters["url"] = "\"{}\"".format(self.swagger_json_uri_absolute)
+        self.parameters["url"] = "\"{}\"".format(self.swagger_json_uri_external)
 
         # oauth2_config
         self.oauth2_config = oauth2_config
@@ -82,9 +84,9 @@ class ApplicationDocument(object):
     @property
     def doc_html(self):
         return self.env.get_template('doc.html').render(
-            url_prefix=self.url_prefix,
+            url_prefix=self.base_url,
             title=self.title,
-            config_url=self.swagger_json_uri_absolute,
+            config_url=self.swagger_json_uri_external,
             parameters=self.parameters,
             oauth2_config=self.oauth2_config,
             custom_css=self.custom_css,
@@ -93,14 +95,21 @@ class ApplicationDocument(object):
     @property
     def editor_html(self):
         return self.env.get_template('editor.html').render(
-            url_prefix=self.url_prefix,
+            url_prefix=self.base_url,
             title=self.title,
-            config_url=self.swagger_json_uri_absolute,
+            config_url=self.swagger_json_uri_external,
             parameters=self.parameters,
         )
 
     def uri(self, suffix=''):
         return r'{}{}'.format(self.url_prefix, suffix)
+
+    def external_uri(self, suffix=''):
+        return r'{}{}'.format(self.base_url, suffix)
+
+    @property
+    def swagger_json_uri_external(self):
+        return self.external_uri(self.swagger_json_uri_relative)
 
     @property
     def static_uri_relative(self):

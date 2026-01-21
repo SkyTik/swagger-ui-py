@@ -5,6 +5,7 @@ from swagger_ui import api_doc
 from swagger_ui import flask_api_doc
 
 from .common import config_content
+from .common import config_path
 from .common import parametrize_list
 
 
@@ -60,3 +61,23 @@ def test_flask(app, mode, kwargs):
     else:
         resp = client.get(f'{url_prefix}/swagger.json')
         assert resp.status_code == 200, resp.data
+
+
+def test_flask_base_url(app):
+    """Test base_url parameter for reverse proxy support."""
+    api_doc(app, config_path=config_path, url_prefix='/docs', base_url='/service/docs')
+    client = app.test_client()
+
+    # Routes should be registered at url_prefix
+    resp = client.get('/docs')
+    assert resp.status_code == 200, resp.data
+
+    resp = client.get('/docs/swagger.json')
+    assert resp.status_code == 200, resp.data
+
+    # HTML should contain external URLs (base_url)
+    html = resp.data.decode() if hasattr(resp, 'data') else resp.text
+    resp = client.get('/docs')
+    html = resp.data.decode()
+    assert '/service/docs/static/swagger-ui.css' in html, html
+    assert '/service/docs/swagger.json' in html, html
