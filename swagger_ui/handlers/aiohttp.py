@@ -10,26 +10,22 @@ def handler(doc):
     async def swagger_config_handler(request):
         return web.json_response(doc.get_config(request.host))
 
-    doc.app.router.add_get(
-        doc.root_uri_absolute(slashes=True), swagger_doc_handler)
-    doc.app.router.add_get(
-        doc.root_uri_absolute(slashes=False), swagger_doc_handler)
+    doc.app.router.add_get(doc.root_uri_absolute(slashes=True), swagger_doc_handler)
+    doc.app.router.add_get(doc.root_uri_absolute(slashes=False), swagger_doc_handler)
 
     if doc.editor:
-        doc.app.router.add_get(
-            doc.editor_uri_absolute(slashes=True), swagger_editor_handler)
-        doc.app.router.add_get(
-            doc.editor_uri_absolute(slashes=False), swagger_editor_handler)
+        doc.app.router.add_get(doc.editor_uri_absolute(slashes=True), swagger_editor_handler)
+        doc.app.router.add_get(doc.editor_uri_absolute(slashes=False), swagger_editor_handler)
 
     if doc.config_rel_url is None:
-        doc.app.router.add_get(
-            doc.swagger_json_uri_absolute, swagger_config_handler)
+        doc.app.router.add_get(doc.swagger_json_uri_absolute, swagger_config_handler)
     doc.app.router.add_static(doc.static_uri_absolute, path=doc.static_dir)
 
 
 def match(doc):
     try:
         import aiohttp.web
+
         if isinstance(doc.app, aiohttp.web.Application):
             return handler
     except ImportError:

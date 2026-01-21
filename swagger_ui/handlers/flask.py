@@ -1,6 +1,5 @@
 def handler(doc):
-    from flask import jsonify
-    from flask import request
+    from flask import jsonify, request
     from flask.blueprints import Blueprint
 
     swagger_blueprint = Blueprint(
@@ -17,12 +16,14 @@ def handler(doc):
         return doc.doc_html
 
     if doc.editor:
+
         @swagger_blueprint.route(doc.editor_uri_relative(slashes=True))
         @swagger_blueprint.route(doc.editor_uri_relative(slashes=False))
         def swagger_blueprint_editor_handler():
             return doc.editor_html
 
     if doc.config_rel_url is None:
+
         @swagger_blueprint.route(doc.swagger_json_uri_relative)
         def swagger_blueprint_config_handler():
             return jsonify(doc.get_config(request.host))
@@ -33,6 +34,7 @@ def handler(doc):
 def match(doc):
     try:
         import flask
+
         if isinstance(doc.app, flask.Flask):
             return handler
     except ImportError:

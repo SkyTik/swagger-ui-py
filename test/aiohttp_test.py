@@ -1,17 +1,15 @@
 import pytest
 from aiohttp import web
 
-from swagger_ui import aiohttp_api_doc
-from swagger_ui import api_doc
+from swagger_ui import aiohttp_api_doc, api_doc
 
-from .common import config_content
-from .common import parametrize_list
+from .common import config_content, parametrize_list
 
 
 @pytest.fixture
 def app():
     async def hello(request):
-        return web.Response(text="Hello, world")
+        return web.Response(text='Hello, world')
 
     app = web.Application()
     app.add_routes([web.get('/hello/world', hello)])
@@ -22,8 +20,10 @@ def app():
 @pytest.mark.parametrize('mode, kwargs', parametrize_list)
 async def test_aiohttp(app, aiohttp_client, mode, kwargs):
     if kwargs.get('config_rel_url'):
+
         async def swagger_config_handler(request):
             return web.Response(text=config_content)
+
         app.add_routes([web.get(kwargs['config_rel_url'], swagger_config_handler)])
 
     if mode == 'auto':

@@ -3,11 +3,9 @@ import pytest
 from falcon import testing
 from packaging.version import Version
 
-from swagger_ui import api_doc
-from swagger_ui import falcon_api_doc
+from swagger_ui import api_doc, falcon_api_doc
 
-from .common import config_content
-from .common import parametrize_list
+from .common import config_content, parametrize_list
 
 
 @pytest.fixture
@@ -34,12 +32,14 @@ def test_falcon(app, mode, kwargs):
         return
 
     if kwargs.get('config_rel_url'):
+
         class SwaggerConfigHandler(object):
             def on_get(self, req, resp):
                 if Version(falcon.__version__) >= Version('4.0.0'):
                     resp.media = config_content
                 else:
                     resp.body = config_content
+
         app.add_route(kwargs['config_rel_url'], SwaggerConfigHandler())
 
     if mode == 'auto':

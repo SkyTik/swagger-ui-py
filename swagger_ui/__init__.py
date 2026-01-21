@@ -22,6 +22,7 @@ def create_api_doc(app_type):
     def _api_doc(app, **kwargs):
         kwargs['app_type'] = app_type
         return api_doc(app, **kwargs)
+
     return _api_doc
 
 

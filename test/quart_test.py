@@ -1,11 +1,9 @@
 import pytest
 from quart import Quart
 
-from swagger_ui import api_doc
-from swagger_ui import quart_api_doc
+from swagger_ui import api_doc, quart_api_doc
 
-from .common import config_content
-from .common import parametrize_list
+from .common import config_content, parametrize_list
 
 
 @pytest.fixture
@@ -15,6 +13,7 @@ def app():
     @app.route(r'/hello/world', methods=['GET'])
     async def hello():
         return 'Hello World!!!'
+
     return app
 
 
@@ -25,6 +24,7 @@ async def test_quart(app, mode, kwargs):
         return
 
     if kwargs.get('config_rel_url'):
+
         @app.route(kwargs['config_rel_url'], methods=['GET'])
         def swagger_config():
             return config_content

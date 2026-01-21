@@ -1,13 +1,10 @@
 import pytest
-from sanic import Sanic
-from sanic import response
+from sanic import Sanic, response
 from sanic_testing.testing import SanicTestClient
 
-from swagger_ui import api_doc
-from swagger_ui import sanic_api_doc
+from swagger_ui import api_doc, sanic_api_doc
 
-from .common import config_content
-from .common import parametrize_list
+from .common import config_content, parametrize_list
 
 
 @pytest.fixture
@@ -17,12 +14,14 @@ def app():
     @app.get(r'/hello/world')
     async def index_handler(request):
         return response.text('Hello World!!!')
+
     return app
 
 
 @pytest.mark.parametrize('mode, kwargs', parametrize_list)
 def test_sanic(app, mode, kwargs):
     if kwargs.get('config_rel_url'):
+
         @app.get(kwargs['config_rel_url'])
         async def swagger_config_handler(request):
             return response.json(config_content)

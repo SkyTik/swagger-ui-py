@@ -4,11 +4,9 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 
-from swagger_ui import api_doc
-from swagger_ui import tornado_api_doc
+from swagger_ui import api_doc, tornado_api_doc
 
-from .common import config_content
-from .common import parametrize_list
+from .common import config_content, parametrize_list
 
 
 @pytest.fixture
@@ -17,9 +15,11 @@ def app():
         def get(self, *args, **kwargs):
             return self.write('Hello World!!!')
 
-    app = tornado.web.Application([
-        (r'/hello/world', HelloWorldHandler),
-    ])
+    app = tornado.web.Application(
+        [
+            (r'/hello/world', HelloWorldHandler),
+        ]
+    )
     return app
 
 
@@ -27,9 +27,11 @@ def app():
 @pytest.mark.parametrize('mode, kwargs', parametrize_list)
 async def test_tornado(app, mode, kwargs):
     if kwargs.get('config_rel_url'):
+
         class SwaggerConfigHandler(tornado.web.RequestHandler):
             def get(self, *args, **kwargs):
                 return self.write(config_content)
+
         app.add_handlers('.*', [(kwargs['config_rel_url'], SwaggerConfigHandler)])
 
     if mode == 'auto':

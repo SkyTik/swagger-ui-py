@@ -1,12 +1,9 @@
 import pytest
 from flask import Flask
 
-from swagger_ui import api_doc
-from swagger_ui import flask_api_doc
+from swagger_ui import api_doc, flask_api_doc
 
-from .common import config_content
-from .common import config_path
-from .common import parametrize_list
+from .common import config_content, config_path, parametrize_list
 
 
 @pytest.fixture
@@ -16,6 +13,7 @@ def app():
     @app.route(r'/hello/world')
     def hello():
         return 'Hello World!!!'
+
     return app
 
 
@@ -25,6 +23,7 @@ def test_flask(app, mode, kwargs):
         return
 
     if kwargs.get('config_rel_url'):
+
         @app.route(kwargs['config_rel_url'])
         def swagger_config():
             return config_content

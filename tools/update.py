@@ -11,16 +11,23 @@ from djlint import Config
 from djlint.reformat import formatter
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--ui', action='store_true',
-                    help='Enabled to update swagger ui.')
-parser.add_argument('--editor', action='store_true',
-                    help='Enabled to update swagger editor.')
-parser.add_argument('--ui-version', type=str, default=None,
-                    help='Specify the version of swagger ui, Default latest version.')
-parser.add_argument('--editor-version', type=str, default=None,
-                    help='Specify the version of swagger editor, Default latest version.')
-parser.add_argument('--no-clean', action='store_true',
-                    help='disable auto clean the temporary files.')
+parser.add_argument('--ui', action='store_true', help='Enabled to update swagger ui.')
+parser.add_argument('--editor', action='store_true', help='Enabled to update swagger editor.')
+parser.add_argument(
+    '--ui-version',
+    type=str,
+    default=None,
+    help='Specify the version of swagger ui, Default latest version.',
+)
+parser.add_argument(
+    '--editor-version',
+    type=str,
+    default=None,
+    help='Specify the version of swagger editor, Default latest version.',
+)
+parser.add_argument(
+    '--no-clean', action='store_true', help='disable auto clean the temporary files.'
+)
 cmd_args = parser.parse_args()
 
 
@@ -28,7 +35,7 @@ SWAGGER_UI_REPO = 'swagger-api/swagger-ui'
 SWAGGER_EDITOR_REPO = 'swagger-api/swagger-editor'
 
 
-DOC_HTML_JAVASCRIPT = '''window.onload = function() {
+DOC_HTML_JAVASCRIPT = """window.onload = function() {
     const ui = SwaggerUIBundle({
         {%- for key, value in parameters.items() %}
         {{ key|safe }}: {{ value|safe }},
@@ -44,15 +51,12 @@ DOC_HTML_JAVASCRIPT = '''window.onload = function() {
     {% endif %}
 
     window.ui = ui;
-};'''
+};"""
 
 
 def detect_latest_release(repo):
     print('detect latest release')
-    resp = requests.get(
-        'https://api.github.com/repos/{}/releases/latest'.format(repo),
-        timeout=120
-    )
+    resp = requests.get('https://api.github.com/repos/{}/releases/latest'.format(repo), timeout=120)
     latest = json.loads(resp.text)
     tag = latest['tag_name']
     print('{} latest version is {}'.format(repo, tag))
@@ -132,32 +136,42 @@ def replace_html_content():
         html = re.sub(r'https://petstore.swagger.io/v[1-9]/swagger.json', '{{ config_url }}', html)
 
         if str(html_path).endswith('doc.html'):
-            html = re.sub(r'window.onload = function\(\) {.*};$', DOC_HTML_JAVASCRIPT, html,
-                          flags=re.MULTILINE | re.DOTALL)
-            html = re.sub(r'<script .*/swagger-initializer.js".*</script>',
-                          '<script>\n{}\n</script>'.format(DOC_HTML_JAVASCRIPT),
-                          html)
+            html = re.sub(
+                r'window.onload = function\(\) {.*};$',
+                DOC_HTML_JAVASCRIPT,
+                html,
+                flags=re.MULTILINE | re.DOTALL,
+            )
+            html = re.sub(
+                r'<script .*/swagger-initializer.js".*</script>',
+                '<script>\n{}\n</script>'.format(DOC_HTML_JAVASCRIPT),
+                html,
+            )
             if 'href="{{ custom_css }}"' not in html:
                 html = re.sub(
                     r'</head>',
                     '{% if custom_css %}<link rel="stylesheet" type="text/css" href="{{ custom_css }}" />{% endif %}</head>',
-                    html
+                    html,
                 )
 
         with html_path.open('w') as html_file:
-            html_file.write(formatter(Config("-"), html))
+            html_file.write(formatter(Config('-'), html))
 
 
 def replace_readme(ui_version, editor_version):
     readme_path = cur_dir.parent.joinpath('README.md')
     readme = readme_path.read_text(encoding='utf-8')
     if ui_version:
-        readme = re.sub(r'Swagger UI version is `.*`',
-                        'Swagger UI version is `{}`'.format(ui_version), readme)
+        readme = re.sub(
+            r'Swagger UI version is `.*`', 'Swagger UI version is `{}`'.format(ui_version), readme
+        )
         print('update swagger ui version: {}'.format(ui_version))
     if editor_version:
-        readme = re.sub(r'Swagger Editor version is `.*`',
-                        'Swagger Editor version is `{}`'.format(editor_version), readme)
+        readme = re.sub(
+            r'Swagger Editor version is `.*`',
+            'Swagger Editor version is `{}`'.format(editor_version),
+            readme,
+        )
         print('update swagger editor version: {}'.format(editor_version))
     readme_path.write_text(readme)
 

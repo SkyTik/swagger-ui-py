@@ -1,13 +1,10 @@
 import pytest
 from bottle import Bottle
-from webtest import AppError
-from webtest import TestApp
+from webtest import AppError, TestApp
 
-from swagger_ui import api_doc
-from swagger_ui import bottle_api_doc
+from swagger_ui import api_doc, bottle_api_doc
 
-from .common import config_content
-from .common import parametrize_list
+from .common import config_content, parametrize_list
 
 
 @pytest.fixture
@@ -17,12 +14,14 @@ def app():
     @app.route('/hello/world')
     def hello():
         return 'Hello World!!!'
+
     return app
 
 
 @pytest.mark.parametrize('mode, kwargs', parametrize_list)
 def test_bottle(app, mode, kwargs):
     if kwargs.get('config_rel_url'):
+
         @app.route(kwargs['config_rel_url'])
         def swagger_config_handler():
             return config_content

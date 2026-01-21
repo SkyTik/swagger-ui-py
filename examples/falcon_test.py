@@ -26,6 +26,7 @@ if __name__ == '__main__':
     # api_doc(app, config_path=config_path, url_prefix='/api/doc')
 
     from swagger_ui import falcon_api_doc
+
     falcon_api_doc(app, config_path=config_path, url_prefix='/api/doc')
 
     httpd = simple_server.make_server('0.0.0.0', 8989, app)

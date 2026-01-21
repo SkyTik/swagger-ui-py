@@ -3,42 +3,40 @@ import importlib
 import urllib.request
 from pathlib import Path
 
-from jinja2 import Environment
-from jinja2 import FileSystemLoader
-from jinja2 import select_autoescape
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from swagger_ui.handlers import supported_list
-from swagger_ui.utils import SWAGGER_UI_PY_ROOT
-from swagger_ui.utils import _load_config
+from swagger_ui.utils import SWAGGER_UI_PY_ROOT, _load_config
 
 _DefaultSwaggerUIBundleParameters = {
-    "dom_id": "\"#swagger-ui\"",
-    "deepLinking": "true",
-    "displayRequestDuration": "true",
-    "layout": "\"StandaloneLayout\"",
-    "plugins": "[SwaggerUIBundle.plugins.DownloadUrl]",
-    "presets": "[SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset]",
+    'dom_id': '"#swagger-ui"',
+    'deepLinking': 'true',
+    'displayRequestDuration': 'true',
+    'layout': '"StandaloneLayout"',
+    'plugins': '[SwaggerUIBundle.plugins.DownloadUrl]',
+    'presets': '[SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset]',
 }
 
 
 class ApplicationDocument(object):
-
-    def __init__(self,
-                 app,
-                 app_type=None,
-                 config=None,
-                 config_path=None,
-                 config_url=None,
-                 config_spec=None,
-                 config_rel_url=None,
-                 custom_css=None,
-                 url_prefix=r'/api/doc',
-                 base_url=None,
-                 title='API doc',
-                 editor=False,
-                 parameters={},
-                 oauth2_config={},
-                 **extra_config):
+    def __init__(
+        self,
+        app,
+        app_type=None,
+        config=None,
+        config_path=None,
+        config_url=None,
+        config_spec=None,
+        config_rel_url=None,
+        custom_css=None,
+        url_prefix=r'/api/doc',
+        base_url=None,
+        title='API doc',
+        editor=False,
+        parameters={},
+        oauth2_config={},
+        **extra_config,
+    ):
         self.app = app
         self.app_type = app_type
         self.title = title
@@ -53,23 +51,28 @@ class ApplicationDocument(object):
         self.config_spec = config_spec
         self.config_rel_url = config_rel_url
         self.custom_css = custom_css
-        assert (self.config or self.config_url or self.config_path or self.config_spec or
-                self.config_rel_url), \
-            'One of arguments "config", "config_path", "config_url", "config_spec"' \
+        assert (
+            self.config
+            or self.config_url
+            or self.config_path
+            or self.config_spec
+            or self.config_rel_url
+        ), (
+            'One of arguments "config", "config_path", "config_url", "config_spec"'
             ' or "config_rel_url" is required!'
+        )
 
         # parameters
         self.parameters = copy.deepcopy(_DefaultSwaggerUIBundleParameters)
         if parameters:
             self.parameters.update(parameters)
-        self.parameters["url"] = "\"{}\"".format(self.swagger_json_uri_external)
+        self.parameters['url'] = '"{}"'.format(self.swagger_json_uri_external)
 
         # oauth2_config
         self.oauth2_config = oauth2_config
 
         self.env = Environment(
-            loader=FileSystemLoader(
-                str(SWAGGER_UI_PY_ROOT.joinpath('templates'))),
+            loader=FileSystemLoader(str(SWAGGER_UI_PY_ROOT.joinpath('templates'))),
             autoescape=select_autoescape(['html']),
         )
 
@@ -160,10 +163,8 @@ class ApplicationDocument(object):
         return config
 
     def match_handler(self):
-
         def match(name):
-            mod = importlib.import_module(
-                'swagger_ui.handlers.{}'.format(name))
+            mod = importlib.import_module('swagger_ui.handlers.{}'.format(name))
             return hasattr(mod, 'match') and mod.match(self)
 
         if self.app_type:

@@ -40,16 +40,16 @@ class FalconInterface(object):
                     resp.body = json.dumps(doc.get_config(f'{req.host}:{req.port}'))
 
         suffix = 'async' if self.use_async else None
-        doc.app.add_route(doc.root_uri_absolute(slashes=True),
-                          SwaggerDocHandler(), suffix=suffix)
-        doc.app.add_route(doc.root_uri_absolute(slashes=False),
-                          SwaggerDocHandler(), suffix=suffix)
+        doc.app.add_route(doc.root_uri_absolute(slashes=True), SwaggerDocHandler(), suffix=suffix)
+        doc.app.add_route(doc.root_uri_absolute(slashes=False), SwaggerDocHandler(), suffix=suffix)
 
         if doc.editor:
-            doc.app.add_route(doc.editor_uri_absolute(slashes=True),
-                              SwaggerEditorHandler(), suffix=suffix)
-            doc.app.add_route(doc.editor_uri_absolute(slashes=False),
-                              SwaggerEditorHandler(), suffix=suffix)
+            doc.app.add_route(
+                doc.editor_uri_absolute(slashes=True), SwaggerEditorHandler(), suffix=suffix
+            )
+            doc.app.add_route(
+                doc.editor_uri_absolute(slashes=False), SwaggerEditorHandler(), suffix=suffix
+            )
 
         if doc.config_rel_url is None:
             doc.app.add_route(doc.swagger_json_uri_absolute, SwaggerConfigHandler(), suffix=suffix)
@@ -67,6 +67,7 @@ def match(doc):
         interface = None
         if Version(falcon.__version__) >= Version('3.0.0'):
             import falcon.asgi
+
             if isinstance(doc.app, falcon.asgi.App):
                 interface = FalconInterface(version=falcon.__version__, use_async=True)
             elif isinstance(doc.app, falcon.App):

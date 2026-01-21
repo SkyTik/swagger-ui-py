@@ -15,6 +15,7 @@ if __name__ == '__main__':
     config_path = os.path.join(working_dir, 'conf/test.yaml')
 
     from swagger_ui import api_doc
+
     api_doc(app, config_path=config_path)
 
     app.run(host='0.0.0.0', port=8989)

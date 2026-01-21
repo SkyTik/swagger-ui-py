@@ -1,6 +1,5 @@
 def handler(doc):
-    from tornado.web import RequestHandler
-    from tornado.web import StaticFileHandler
+    from tornado.web import RequestHandler, StaticFileHandler
 
     class DocHandler(RequestHandler):
         def get(self, *args, **kwargs):
@@ -17,8 +16,7 @@ def handler(doc):
     handlers = [
         (doc.root_uri_absolute(slashes=True), DocHandler),
         (doc.root_uri_absolute(slashes=False), DocHandler),
-        (r'{}/(.+)'.format(doc.static_uri_absolute),
-         StaticFileHandler, {'path': doc.static_dir}),
+        (r'{}/(.+)'.format(doc.static_uri_absolute), StaticFileHandler, {'path': doc.static_dir}),
     ]
 
     if doc.config_rel_url is None:
@@ -36,6 +34,7 @@ def handler(doc):
 def match(doc):
     try:
         import tornado.web
+
         if isinstance(doc.app, tornado.web.Application):
             return handler
     except ImportError:

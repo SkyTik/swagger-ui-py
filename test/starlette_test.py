@@ -3,11 +3,9 @@ from starlette.applications import Starlette
 from starlette.responses import PlainTextResponse
 from starlette.testclient import TestClient
 
-from swagger_ui import api_doc
-from swagger_ui import starlette_api_doc
+from swagger_ui import api_doc, starlette_api_doc
 
-from .common import config_content
-from .common import parametrize_list
+from .common import config_content, parametrize_list
 
 
 @pytest.fixture
@@ -17,6 +15,7 @@ def app():
     @app.route('/hello/world')
     def hello_world(request):
         return PlainTextResponse('Hello World!!!')
+
     return app
 
 
@@ -26,6 +25,7 @@ def test_starlette(app, mode, kwargs):
         return
 
     if kwargs.get('config_rel_url'):
+
         @app.route(kwargs['config_rel_url'])
         def swagger_config(request):
             return PlainTextResponse(config_content)
