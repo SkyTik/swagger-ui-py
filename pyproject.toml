@@ -3,14 +3,14 @@ requires = ["setuptools>=80", "setuptools-scm>=8", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "swagger-ui-py"
+name = "swagger-ui-python"
 dynamic = ["version"]
 description = "Swagger UI for Python web framework, such as Tornado, Flask, Quart, Sanic and Falcon."
 readme = "README.md"
 requires-python = ">=3.8"
 license = "Apache-2.0"
 authors = [
-    {name = "PWZER", email = "pwzergo@gmail.com"}
+    {name = "SkyTik"}
 ]
 keywords = ["swagger", "swagger-ui", "openapi", "api", "documentation", "flask", "tornado", "sanic", "quart", "falcon", "aiohttp", "starlette", "bottle", "chalice"]
 classifiers = [
@@ -33,9 +33,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/PWZER/swagger-ui-py"
-Repository = "https://github.com/PWZER/swagger-ui-py"
-Issues = "https://github.com/PWZER/swagger-ui-py/issues"
+Homepage = "https://github.com/SkyTik/swagger-ui-py"
+Repository = "https://github.com/SkyTik/swagger-ui-py"
+Issues = "https://github.com/SkyTik/swagger-ui-py/issues"
 
 [tool.setuptools]
 packages = ["swagger_ui", "swagger_ui.handlers"]
