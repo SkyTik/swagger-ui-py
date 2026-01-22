@@ -1,5 +1,5 @@
-[![tests](https://github.com/SkyTik/swagger-ui-python/actions/workflows/lint-and-pytest.yml/badge.svg)](https://github.com/SkyTik/swagger-ui-python/actions/workflows/lint-and-pytest.yml)
-[![Version](https://badge.fury.io/gh/SkyTik%2Fswagger-ui-python.svg)](https://github.com/SkyTik/swagger-ui-python/tags)
+[![tests](https://github.com/SkyTik/swagger-ui-py/actions/workflows/lint-and-pytest.yml/badge.svg)](https://github.com/SkyTik/swagger-ui-py/actions/workflows/lint-and-pytest.yml)
+[![Version](https://badge.fury.io/gh/SkyTik%2Fswagger-ui-py.svg)](https://github.com/SkyTik/swagger-ui-py/tags)
 
 [Documentation](./docs/)
 
@@ -298,20 +298,24 @@ make upload              # Upload to PyPI
 ## Troubleshooting
 
 **Framework not detected:**
+
 - Ensure framework is installed
 - Try explicit `app_type` parameter: `api_doc(app, app_type='flask', ...)`
 
 **Config not loading:**
+
 - Check file path exists and is readable
 - Validate YAML/JSON format using [Swagger Editor](https://editor.swagger.io/)
 - Check CORS headers if using remote URL
 
 **Routes not registered:**
+
 - Ensure `api_doc()` called before app starts
 - Check `url_prefix` doesn't conflict with existing routes
 - Verify framework-specific setup (e.g., `app.register_blueprint()` for Flask)
 
 For more help:
+
 - Check [examples/](./examples/) directory for working samples
 - Review [GitHub Issues](https://github.com/SkyTik/swagger-ui-python/issues)
 - Read framework-specific documentation
