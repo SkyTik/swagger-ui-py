@@ -142,20 +142,44 @@ api_doc(
 
 ### 3. Reverse Proxy Support
 
-When running behind a reverse proxy with a path prefix (e.g., ingress `/service/*` → backend), use `base_url` to set the external URL path for static assets:
+When deploying behind a reverse proxy, you may need to separate internal route registration from external URL paths.
+
+**Common scenario:** Reverse proxy routes `/api/*` to your backend service at root `/`
+
+**The Problem:**
+
+Without `base_url`, Swagger UI generates incorrect asset URLs:
 
 ```python
-# Proxy routes /service/docs/* to backend /docs/*
+api_doc(app, config_path='./openapi.yaml', url_prefix='/docs')
+```
+
+- Backend registers routes at `/docs` ✓
+- Browser requests `/api/docs` → proxy routes to backend `/docs` ✓
+- But Swagger UI generates links like `/docs/static/swagger-ui.css`
+- Browser requests `/docs/static/swagger-ui.css` → 404 ✗ (missing `/api` prefix)
+
+**The Solution:**
+
+Use `base_url` to include the proxy path prefix in generated URLs:
+
+```python
 api_doc(
     app,
     config_path='./openapi.yaml',
-    url_prefix='/docs',              # Internal routes registered at /docs
-    base_url='/service/docs',        # Assets linked as /service/docs/static/*
+    url_prefix='/docs',        # Backend registers routes here
+    base_url='/api/docs',      # Browser URLs include proxy prefix
 )
 ```
 
-- `url_prefix` - Used for internal route registration (app-side)
-- `base_url` - Used for asset URLs in HTML templates (browser-side, defaults to `url_prefix`)
+- Backend registers routes at `/docs` (unchanged)
+- Swagger UI generates links like `/api/docs/static/swagger-ui.css` ✓
+- Browser requests `/api/docs/static/swagger-ui.css` → proxy routes to backend `/docs/static/swagger-ui.css` ✓
+
+**Key distinction:**
+
+- `url_prefix` - Where your app registers routes (backend/app-side)
+- `base_url` - Path prefix for URLs in HTML (browser/client-side, defaults to `url_prefix`)
 
 ### 4. Swagger UI Customization
 
