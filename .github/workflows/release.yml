@@ -54,7 +54,7 @@ jobs:
     needs: build
     environment:
       name: pypi
-      url: https://pypi.org/project/swagger-ui-py/
+      url: https://pypi.org/project/swagger-ui-python/
     permissions:
       id-token: write
       attestations: write
